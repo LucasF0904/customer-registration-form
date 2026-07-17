@@ -1,7 +1,7 @@
 import { Controller, Get, UseGuards } from '@nestjs/common'
 import { ThrottlerGuard } from '@nestjs/throttler'
 import { ApiOperation, ApiTags, ApiOkResponse } from '@nestjs/swagger'
-import type { ListColorsUseCase } from '../../application/use-cases/list-colors/list-colors.use-case'
+import { ListColorsUseCase } from '../../application/use-cases/list-colors/list-colors.use-case'
 import { successResponse } from '../../../shared/response/api-response'
 
 @ApiTags('colors')

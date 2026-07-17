@@ -7,8 +7,8 @@ import {
   ApiTags,
   ApiBadRequestResponse,
 } from '@nestjs/swagger'
-import type { RegisterCustomerUseCase } from '../../application/use-cases/register-customer/register-customer.use-case'
-import type { RegisterCustomerDto } from '../../application/use-cases/register-customer/register-customer.dto'
+import { RegisterCustomerUseCase } from '../../application/use-cases/register-customer/register-customer.use-case'
+import { RegisterCustomerDto } from '../../application/use-cases/register-customer/register-customer.dto'
 import { successResponse } from '../../../shared/response/api-response'
 
 @ApiTags('customers')

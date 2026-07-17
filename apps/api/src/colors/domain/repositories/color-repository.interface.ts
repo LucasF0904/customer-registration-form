@@ -1,4 +1,4 @@
-import type { ColorEntity } from '../entities/color.entity'
+import { ColorEntity } from '../entities/color.entity'
 
 export interface IColorRepository {
   findAll(): Promise<ColorEntity[]>

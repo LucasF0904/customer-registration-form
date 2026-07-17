@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common'
-import type { HealthCheckService, TypeOrmHealthIndicator } from '@nestjs/terminus'
+import { HealthCheckService, TypeOrmHealthIndicator } from '@nestjs/terminus'
 import { HealthCheck } from '@nestjs/terminus'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 

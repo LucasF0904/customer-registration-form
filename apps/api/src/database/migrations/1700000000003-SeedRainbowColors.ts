@@ -1,4 +1,4 @@
-import type { MigrationInterface, QueryRunner } from 'typeorm'
+import { MigrationInterface, QueryRunner } from 'typeorm'
 
 const RAINBOW_COLORS = [
   { name: 'Vermelho', hexCode: '#E53E3E' },

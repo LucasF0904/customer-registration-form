@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ListColorsUseCase } from './list-colors.use-case'
-import type { IColorRepository } from '../../../domain/repositories/color-repository.interface'
+import { IColorRepository } from '../../../domain/repositories/color-repository.interface'
 import { ColorEntity } from '../../../domain/entities/color.entity'
 
 const mockColorRepo: IColorRepository = {

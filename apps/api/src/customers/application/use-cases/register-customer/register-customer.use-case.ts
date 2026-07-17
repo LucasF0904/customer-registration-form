@@ -7,15 +7,15 @@ import {
 } from '@nestjs/common'
 import {
   CUSTOMER_REPOSITORY,
-  type ICustomerRepository,
+  ICustomerRepository,
 } from '../../../domain/repositories/customer-repository.interface'
 import {
   COLOR_REPOSITORY,
-  type IColorRepository,
+  IColorRepository,
 } from '../../../../colors/domain/repositories/color-repository.interface'
 import { isValidCpf } from '../../../../shared/validations/cpf.validation'
-import type { RegisterCustomerDto } from './register-customer.dto'
-import type { CustomerEntity } from '../../../domain/entities/customer.entity'
+import { RegisterCustomerDto } from './register-customer.dto'
+import { CustomerEntity } from '../../../domain/entities/customer.entity'
 
 @Injectable()
 export class RegisterCustomerUseCase {

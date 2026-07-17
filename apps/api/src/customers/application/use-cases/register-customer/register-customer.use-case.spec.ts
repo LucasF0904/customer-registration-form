@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ConflictException, NotFoundException, BadRequestException } from '@nestjs/common'
 import { RegisterCustomerUseCase } from './register-customer.use-case'
-import type { ICustomerRepository } from '../../../domain/repositories/customer-repository.interface'
-import type { IColorRepository } from '../../../../colors/domain/repositories/color-repository.interface'
+import { ICustomerRepository } from '../../../domain/repositories/customer-repository.interface'
+import { IColorRepository } from '../../../../colors/domain/repositories/color-repository.interface'
 import { ColorEntity } from '../../../../colors/domain/entities/color.entity'
 import { CustomerEntity } from '../../../domain/entities/customer.entity'
 

@@ -1,4 +1,4 @@
-import type { PaginatedResponse, PaginatedMeta } from '@customer-reg/shared'
+import { PaginatedResponse, PaginatedMeta } from '@customer-reg/shared'
 
 export function paginatedResponse<T>(data: T[], meta: PaginatedMeta): PaginatedResponse<T> {
   return { success: true, data, meta }

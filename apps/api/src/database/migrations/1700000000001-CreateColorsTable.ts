@@ -1,4 +1,4 @@
-import type { MigrationInterface, QueryRunner } from 'typeorm'
+import { MigrationInterface, QueryRunner } from 'typeorm'
 
 export class CreateColorsTable1700000000001 implements MigrationInterface {
   name = 'CreateColorsTable1700000000001'

@@ -1,4 +1,4 @@
-import type { CustomerEntity } from '../entities/customer.entity'
+import { CustomerEntity } from '../entities/customer.entity'
 
 export interface CreateCustomerData {
   name: string

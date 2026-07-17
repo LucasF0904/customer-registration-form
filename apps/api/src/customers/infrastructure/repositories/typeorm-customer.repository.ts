@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import type { Repository } from 'typeorm'
+import { Repository } from 'typeorm'
 import { CustomerTypeOrmEntity } from '../entities/customer.typeorm-entity'
-import type {
+import {
   ICustomerRepository,
   CreateCustomerData,
 } from '../../domain/repositories/customer-repository.interface'

@@ -1,7 +1,7 @@
 import { Users } from 'lucide-react'
 import { RegistrationForm } from '@/components/registration-form/registration-form'
 import { apiClient } from '@/lib/api-client'
-import type { RainbowColor } from '@customer-reg/shared'
+import { RainbowColor } from '@customer-reg/shared'
 
 async function getColors(): Promise<RainbowColor[]> {
   try {

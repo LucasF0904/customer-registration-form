@@ -1,6 +1,6 @@
 'use client'
 
-import type { RainbowColor } from '@customer-reg/shared'
+import { RainbowColor } from '@customer-reg/shared'
 import { cn } from '@/lib/utils'
 
 interface ColorPickerProps {

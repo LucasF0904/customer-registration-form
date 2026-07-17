@@ -1,5 +1,5 @@
 import { CheckCircle2 } from 'lucide-react'
-import type { RegisterCustomerResponse } from '@customer-reg/shared'
+import { RegisterCustomerResponse } from '@customer-reg/shared'
 
 interface SuccessScreenProps {
   data: RegisterCustomerResponse

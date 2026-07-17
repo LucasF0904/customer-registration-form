@@ -1,4 +1,4 @@
-import type { ColorEntity } from '../../../colors/domain/entities/color.entity'
+import { ColorEntity } from '../../../colors/domain/entities/color.entity'
 
 export class CustomerEntity {
   constructor(
