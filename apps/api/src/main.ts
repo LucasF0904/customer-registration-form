@@ -1,9 +1,12 @@
 import 'reflect-metadata'
 import { NestFactory } from '@nestjs/core'
+import { ValidationPipe } from '@nestjs/common'
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { Logger } from 'nestjs-pino'
 import { AppModule } from './app.module'
+import { GlobalExceptionFilter } from './shared/filters/global-exception.filter'
+import { ResponseInterceptor } from './shared/interceptors/response.interceptor'
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter(), {
@@ -11,6 +14,16 @@ async function bootstrap() {
   })
 
   app.useLogger(app.get(Logger))
+
+  app.useGlobalFilters(new GlobalExceptionFilter())
+  app.useGlobalInterceptors(new ResponseInterceptor())
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      forbidNonWhitelisted: true,
+    }),
+  )
 
   app.enableCors({
     origin: process.env.FRONTEND_URL ?? 'http://localhost:3000',
