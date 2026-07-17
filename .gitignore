@@ -34,6 +34,9 @@ coverage/
 playwright-report/
 test-results/
 
+# Next.js generated
+**/next-env.d.ts
+
 # TypeORM
 ormconfig.js
 
