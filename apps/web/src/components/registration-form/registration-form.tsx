@@ -44,7 +44,14 @@ export function RegistrationForm({ colors }: RegistrationFormProps) {
   const onSubmit = async (data: RegistrationFormData) => {
     setApiError(null)
     try {
-      const response = await apiClient.customers.register(data)
+      const payload = {
+        name: data.name,
+        cpf: data.cpf,
+        email: data.email,
+        colorId: data.colorId,
+        ...(data.notes ? { notes: data.notes } : {}),
+      }
+      const response = await apiClient.customers.register(payload)
       if (response.success && response.data) {
         setSuccessData(response.data)
       }

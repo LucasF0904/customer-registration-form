@@ -16,14 +16,13 @@ import { ColorTypeOrmEntity } from './colors/infrastructure/entities/color.typeo
     LoggerModule.forRoot({
       pinoHttp: {
         level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
-        transport:
-          process.env.NODE_ENV !== 'production'
-            ? { target: 'pino-pretty', options: { colorize: true, singleLine: true } }
-            : undefined,
+        ...(process.env.NODE_ENV !== 'production'
+          ? { transport: { target: 'pino-pretty', options: { colorize: true, singleLine: true } } }
+          : {}),
         redact: ['req.headers.authorization'],
         serializers: {
-          req: (req) => ({ method: req.method, url: req.url }),
-          res: (res) => ({ statusCode: res.statusCode }),
+          req: (req: { method: string; url: string }) => ({ method: req.method, url: req.url }),
+          res: (res: { statusCode: number }) => ({ statusCode: res.statusCode }),
         },
       },
     }),

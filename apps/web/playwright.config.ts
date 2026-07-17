@@ -5,7 +5,7 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  ...(process.env.CI ? { workers: 1 } : {}),
   reporter: 'html',
   use: {
     baseURL: process.env.E2E_BASE_URL ?? 'http://localhost:3000',
@@ -16,11 +16,13 @@ export default defineConfig({
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
     { name: 'mobile-chrome', use: { ...devices['Pixel 5'] } },
   ],
-  webServer: process.env.CI
+  ...(process.env.CI
     ? {
-        command: 'pnpm start',
-        url: 'http://localhost:3000',
-        reuseExistingServer: false,
+        webServer: {
+          command: 'pnpm start',
+          url: 'http://localhost:3000',
+          reuseExistingServer: false,
+        },
       }
-    : undefined,
+    : {}),
 })

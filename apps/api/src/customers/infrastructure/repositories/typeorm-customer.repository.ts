@@ -25,7 +25,7 @@ export class TypeOrmCustomerRepository implements ICustomerRepository {
       notes: data.notes,
     })
     const saved = await this.repo.save(entity)
-    return this.toDomain(saved)
+    return this.toDomain(saved as CustomerTypeOrmEntity)
   }
 
   async existsByCpf(cpf: string): Promise<boolean> {
