@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #F8FAFC;
+  --card: #FFFFFF;
+  --text: #020617;
+  --muted: #475569;
+  --subtle: #94A3B8;
+  --border: #E2E8F0;
+  --input-bg: #FFFFFF;
+  --panel-bg: #0F172A;
+  --panel-text: #F1F5F9;
+  --panel-muted: #94A3B8;
+  --cta: #0369A1;
+  --cta-hover: #0284C7;
+  --success: #059669;
+  --error: #DC2626;
+  --focus-ring: #0369A1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0A1120;
+    --card: #1E293B;
+    --text: #F1F5F9;
+    --muted: #94A3B8;
+    --subtle: #64748B;
+    --border: #334155;
+    --input-bg: #0F172A;
+    --panel-bg: #020617;
+    --panel-text: #F1F5F9;
+    --panel-muted: #64748B;
+  }
+}
+
+:root[data-theme='light'] {
+  --bg: #F8FAFC;
+  --card: #FFFFFF;
+  --text: #020617;
+  --muted: #475569;
+  --subtle: #94A3B8;
+  --border: #E2E8F0;
+  --input-bg: #FFFFFF;
+  --panel-bg: #0F172A;
+  --panel-text: #F1F5F9;
+  --panel-muted: #94A3B8;
+}
+
+:root[data-theme='dark'] {
+  --bg: #0A1120;
+  --card: #1E293B;
+  --text: #F1F5F9;
+  --muted: #94A3B8;
+  --subtle: #64748B;
+  --border: #334155;
+  --input-bg: #0F172A;
+  --panel-bg: #020617;
+  --panel-text: #F1F5F9;
+  --panel-muted: #64748B;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  transition: background-color 0.2s, color 0.2s;
+}
+
+@layer utilities {
+  .text-muted { color: var(--muted); }
+  .text-subtle { color: var(--subtle); }
+  .bg-card { background-color: var(--card); }
+  .bg-surface { background-color: var(--bg); }
+  .border-base { border-color: var(--border); }
+}

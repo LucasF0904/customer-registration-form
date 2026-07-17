@@ -1,0 +1,23 @@
+services:
+  postgres:
+    ports:
+      - '5432:5432'
+
+  api:
+    build:
+      target: builder
+    command: pnpm --filter api dev
+    volumes:
+      - ./apps/api/src:/app/apps/api/src:ro
+    environment:
+      NODE_ENV: development
+
+  web:
+    build:
+      target: builder
+    command: pnpm --filter web dev
+    volumes:
+      - ./apps/web/src:/app/apps/web/src:ro
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_API_URL: http://localhost:3001

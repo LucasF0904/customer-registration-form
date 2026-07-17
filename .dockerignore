@@ -1,0 +1,12 @@
+node_modules
+.next
+dist
+.turbo
+coverage
+playwright-report
+docker-data
+.git
+.gitignore
+*.md
+.env*
+!.env.example

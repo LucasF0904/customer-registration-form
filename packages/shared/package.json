@@ -1,0 +1,14 @@
+{
+  "name": "@customer-reg/shared",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@customer-reg/tsconfig": "workspace:*",
+    "typescript": "^5.5.4"
+  }
+}

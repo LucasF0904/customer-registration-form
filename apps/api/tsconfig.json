@@ -1,0 +1,15 @@
+{
+  "extends": "@customer-reg/tsconfig/nestjs.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["src/shared/*"],
+      "@customers/*": ["src/customers/*"],
+      "@colors/*": ["src/colors/*"],
+      "@database/*": ["src/database/*"],
+      "@health/*": ["src/health/*"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.spec.ts"]
+}
