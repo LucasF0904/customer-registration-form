@@ -3,6 +3,7 @@ RUN corepack enable pnpm
 
 FROM base AS deps
 WORKDIR /app
+RUN apk add --no-cache python3 make g++
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY apps/api/package.json ./apps/api/
 COPY packages/tsconfig/package.json ./packages/tsconfig/
@@ -21,6 +22,7 @@ RUN pnpm --filter api build
 
 FROM node:20-alpine AS runner
 WORKDIR /app
+RUN apk add --no-cache libstdc++
 ENV NODE_ENV=production
 
 RUN addgroup --system --gid 1001 nodejs

@@ -52,4 +52,8 @@ async function bootstrap() {
   await app.listen(port, '0.0.0.0')
 }
 
-bootstrap()
+bootstrap().catch((err) => {
+  console.error('FATAL:', err?.message ?? err)
+  console.error(err?.stack)
+  process.exit(1)
+})
