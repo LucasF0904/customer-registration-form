@@ -57,7 +57,6 @@ import { AuthModule } from './auth/auth.module'
         logging: config.get('NODE_ENV') === 'development',
         retryAttempts: 5,
         retryDelay: 3000,
-        verboseRetryLog: true,
       }),
     }),
 
