@@ -13,11 +13,25 @@ const mockColorRepo: IColorRepository = {
 
 const mockCustomerRepo: ICustomerRepository = {
   create: vi.fn(),
-  existsByCpf: vi.fn(),
+  existsByCpfFingerprint: vi.fn(),
   existsByEmail: vi.fn(),
+  findAll: vi.fn(),
+  findById: vi.fn(),
+  getStats: vi.fn(),
 }
 
 const mockColor = new ColorEntity('color-id', 'Vermelho', '#E53E3E', new Date())
+
+const mockCustomer = new CustomerEntity(
+  'id',
+  'Maria Oliveira',
+  '$argon2id$...',
+  '***.982.247-**',
+  'abc123fingerprint',
+  'maria@exemplo.com',
+  mockColor,
+  new Date(),
+)
 
 const validDto = {
   name: 'Maria Oliveira',
@@ -32,19 +46,22 @@ describe('RegisterCustomerUseCase', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     useCase = new RegisterCustomerUseCase(mockCustomerRepo, mockColorRepo)
-    vi.mocked(mockCustomerRepo.existsByCpf).mockResolvedValue(false)
+    vi.mocked(mockCustomerRepo.existsByCpfFingerprint).mockResolvedValue(false)
     vi.mocked(mockCustomerRepo.existsByEmail).mockResolvedValue(false)
     vi.mocked(mockColorRepo.findById).mockResolvedValue(mockColor)
-    vi.mocked(mockCustomerRepo.create).mockResolvedValue(
-      new CustomerEntity('id', validDto.name, '52998224725', validDto.email, mockColor, new Date()),
-    )
+    vi.mocked(mockCustomerRepo.create).mockResolvedValue(mockCustomer)
   })
 
   it('should register a customer successfully', async () => {
     const result = await useCase.execute(validDto)
     expect(result).toBeInstanceOf(CustomerEntity)
     expect(mockCustomerRepo.create).toHaveBeenCalledWith(
-      expect.objectContaining({ cpf: '52998224725', email: 'maria@exemplo.com' }),
+      expect.objectContaining({
+        cpfHash: expect.any(String),
+        cpfMasked: expect.stringContaining('982'),
+        cpfFingerprint: expect.any(String),
+        email: 'maria@exemplo.com',
+      }),
     )
   })
 
@@ -55,7 +72,7 @@ describe('RegisterCustomerUseCase', () => {
   })
 
   it('should throw ConflictException when CPF already exists', async () => {
-    vi.mocked(mockCustomerRepo.existsByCpf).mockResolvedValue(true)
+    vi.mocked(mockCustomerRepo.existsByCpfFingerprint).mockResolvedValue(true)
     await expect(useCase.execute(validDto)).rejects.toThrow(ConflictException)
   })
 
@@ -69,9 +86,10 @@ describe('RegisterCustomerUseCase', () => {
     await expect(useCase.execute(validDto)).rejects.toThrow(NotFoundException)
   })
 
-  it('should normalize CPF by stripping formatting', async () => {
+  it('should compute CPF fingerprint from stripped digits', async () => {
     await useCase.execute(validDto)
-    expect(mockCustomerRepo.existsByCpf).toHaveBeenCalledWith('52998224725')
+    expect(mockCustomerRepo.existsByCpfFingerprint).toHaveBeenCalledWith(expect.any(String))
+    expect(mockCustomerRepo.existsByCpfFingerprint).toHaveBeenCalledTimes(1)
   })
 
   it('should normalize email to lowercase', async () => {
@@ -80,7 +98,7 @@ describe('RegisterCustomerUseCase', () => {
   })
 
   it('should check CPF and email existence in parallel', async () => {
-    const cpfSpy = vi.mocked(mockCustomerRepo.existsByCpf)
+    const cpfSpy = vi.mocked(mockCustomerRepo.existsByCpfFingerprint)
     const emailSpy = vi.mocked(mockCustomerRepo.existsByEmail)
     await useCase.execute(validDto)
     expect(cpfSpy).toHaveBeenCalledTimes(1)
