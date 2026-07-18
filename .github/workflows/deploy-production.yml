@@ -96,7 +96,6 @@ jobs:
     name: Deploy API → Coolify Production
     runs-on: ubuntu-latest
     needs: build
-    environment: production
 
     steps:
       - name: Trigger Coolify deploy (API)
@@ -117,7 +116,6 @@ jobs:
     name: Deploy Web → Coolify Production
     runs-on: ubuntu-latest
     needs: build
-    environment: production
 
     steps:
       - name: Trigger Coolify deploy (Web)
