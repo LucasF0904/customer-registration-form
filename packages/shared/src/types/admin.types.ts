@@ -13,7 +13,7 @@ export interface LoginResponse {
 export interface CustomerListItem {
   id: string
   name: string
-  cpf: string
+  cpfMasked: string
   email: string
   color: {
     id: string

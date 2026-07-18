@@ -22,7 +22,9 @@ export class TypeOrmCustomerRepository implements ICustomerRepository {
   async create(data: CreateCustomerData): Promise<CustomerEntity> {
     const entity = this.repo.create({
       name: data.name,
-      cpf: data.cpf,
+      cpfHash: data.cpfHash,
+      cpfMasked: data.cpfMasked,
+      cpfFingerprint: data.cpfFingerprint,
       email: data.email,
       colorId: data.colorId,
       notes: data.notes,
@@ -32,8 +34,8 @@ export class TypeOrmCustomerRepository implements ICustomerRepository {
     return this.toDomain(withRelations)
   }
 
-  async existsByCpf(cpf: string): Promise<boolean> {
-    return this.repo.existsBy({ cpf })
+  async existsByCpfFingerprint(fingerprint: string): Promise<boolean> {
+    return this.repo.existsBy({ cpfFingerprint: fingerprint })
   }
 
   async existsByEmail(email: string): Promise<boolean> {
@@ -48,7 +50,7 @@ export class TypeOrmCustomerRepository implements ICustomerRepository {
       ? [
           { name: ILike(`%${search}%`), ...(colorId ? { colorId } : {}) },
           { email: ILike(`%${search}%`), ...(colorId ? { colorId } : {}) },
-          { cpf: ILike(`%${search}%`), ...(colorId ? { colorId } : {}) },
+          { cpfMasked: ILike(`%${search}%`), ...(colorId ? { colorId } : {}) },
         ]
       : colorId
         ? [{ colorId }]
@@ -93,6 +95,16 @@ export class TypeOrmCustomerRepository implements ICustomerRepository {
       row.color.hexCode,
       row.color.createdAt,
     )
-    return new CustomerEntity(row.id, row.name, row.cpf, row.email, color, row.createdAt, row.notes)
+    return new CustomerEntity(
+      row.id,
+      row.name,
+      row.cpfHash,
+      row.cpfMasked,
+      row.cpfFingerprint,
+      row.email,
+      color,
+      row.createdAt,
+      row.notes,
+    )
   }
 }

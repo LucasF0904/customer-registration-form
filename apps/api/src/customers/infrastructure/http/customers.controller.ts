@@ -33,7 +33,7 @@ import { successResponse } from '../../../shared/response/api-response'
 function toCustomerDto(customer: {
   id: string
   name: string
-  cpf: string
+  cpfMasked: string
   email: string
   color: { id: string; name: string; hexCode: string }
   notes?: string
@@ -42,7 +42,7 @@ function toCustomerDto(customer: {
   return {
     id: customer.id,
     name: customer.name,
-    cpf: customer.cpf,
+    cpfMasked: customer.cpfMasked,
     email: customer.email,
     color: { id: customer.color.id, name: customer.color.name, hexCode: customer.color.hexCode },
     notes: customer.notes,

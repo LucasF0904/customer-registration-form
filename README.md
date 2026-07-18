@@ -1,324 +1,215 @@
 # Customer Registration Form
 
-Formulário de cadastro de clientes desenvolvido como teste técnico para a **Eteg**.
-
-## Sumário
-
-- [Sobre o Projeto](#sobre-o-projeto)
-- [Stack Técnica](#stack-técnica)
-- [Arquitetura](#arquitetura)
-- [Pré-requisitos](#pré-requisitos)
-- [Rodando Localmente](#rodando-localmente)
-- [Rodando com Docker](#rodando-com-docker)
-- [Testes](#testes)
-- [Endpoints da API](#endpoints-da-api)
-- [Variáveis de Ambiente](#variáveis-de-ambiente)
-- [Estrutura do Monorepo](#estrutura-do-monorepo)
+Teste técnico full-stack — monorepo com API REST (NestJS) e frontend (Next.js 14), autenticação JWT, backoffice administrativo e criptografia de dados sensíveis.
 
 ---
 
-## Sobre o Projeto
+## Visão geral
 
-Aplicação full-stack que permite o cadastro único de clientes (unicidade por CPF e e-mail) com:
-
-- Validação completa de CPF (algoritmo dos dígitos verificadores)
-- Seleção de cor preferida do arco-íris via swatches visuais
-- Feedback de sucesso ou erro imediato após a submissão
-- Layout responsivo com suporte a dark/light mode
-- Rate limiting para proteção contra spam
+| Camada              | Tecnologia                                               |
+| ------------------- | -------------------------------------------------------- |
+| Monorepo            | Turborepo + pnpm workspaces                              |
+| API                 | NestJS 10 + Fastify + TypeORM + PostgreSQL               |
+| Frontend            | Next.js 14 App Router + Framer Motion                    |
+| Autenticação        | JWT com Argon2id (senha) + JwtAuthGuard customizado      |
+| Criptografia de CPF | Argon2id (hash irreversível) + HMAC-SHA256 (fingerprint) |
+| Testes              | Vitest (unitários + integração) + Playwright (E2E)       |
+| Containers          | Docker multi-stage + Docker Compose                      |
+| CI/CD               | GitHub Actions (lint → test → build → docker-build)      |
 
 ---
 
-## Stack Técnica
+## Funcionalidades
 
-| Camada           | Tecnologia                                        |
-| ---------------- | ------------------------------------------------- |
-| Monorepo         | Turborepo + pnpm workspaces                       |
-| Backend          | NestJS + Fastify + TypeORM                        |
-| Frontend         | Next.js 14 + React Hook Form + Zod + Tailwind CSS |
-| Banco de dados   | PostgreSQL                                        |
-| Validação (API)  | class-validator + class-transformer               |
-| Testes unitários | Vitest                                            |
-| Testes E2E       | Playwright                                        |
-| Logger           | Pino (JSON em produção, pretty em dev)            |
-| Docs             | Swagger/OpenAPI (apenas em dev)                   |
-| Infra            | Docker + Docker Compose                           |
-| CI               | GitHub Actions                                    |
+### Formulário de cadastro público
+
+- Campos: nome, CPF (com máscara), e-mail, cor preferida, observações (opcional)
+- Validação de CPF (algoritmo de dígitos verificadores) no frontend e no backend
+- Checagem de unicidade de CPF e e-mail sem armazenar o número em texto claro
+- Tela de sucesso animada com comprovante (CPF exibido parcialmente: `***.982.247-**`)
+
+### Backoffice administrativo
+
+- Login protegido com senha criptografada via Argon2id
+- Dashboard com KPIs: total de clientes, cores distintas, cor mais popular, paginação atual
+- Tabela paginada com busca (nome, CPF mascarado, e-mail) e filtro por cor
+- Modal de detalhes do cliente com animação Framer Motion
+- Skeleton loading para eliminar flicker de transição
+
+### API REST documentada
+
+- Swagger UI em `/docs` com suporte a Bearer Token (botão Authorize)
+- Rate limiting em `POST /customers` (ThrottlerGuard)
+- Respostas no formato `{ success, data, timestamp }` via ResponseInterceptor
+- Tratamento de erros centralizado via GlobalExceptionFilter
 
 ---
 
 ## Arquitetura
 
-O projeto segue **Domain-Driven Design (DDD)** com separação estrita de camadas:
+Segue Domain-Driven Design (DDD) estrito:
 
 ```
-apps/api/src/
-├── colors/
-│   ├── application/      # use cases
-│   ├── domain/           # entities, interfaces de repositório
-│   └── infrastructure/   # TypeORM entities, repos, controllers
-└── customers/
-    ├── application/      # use cases, DTOs
-    ├── domain/           # entities, interfaces de repositório
-    └── infrastructure/   # TypeORM entities, repos, controllers
+src/
+├── domain/          → entidades, value objects, interfaces de repositório
+├── application/     → use cases, DTOs
+├── infrastructure/  → TypeORM entities, repositories, HTTP controllers, migrations
+└── shared/          → filtros, interceptors, guards, validações
 ```
 
-**Fluxo de dependência:** `infrastructure → application → domain` (o domínio não conhece nada além de si mesmo).
+**Fluxo de dependência:** `infrastructure → application → domain`
 
-O módulo `packages/shared` exporta tipos TypeScript e DTOs consumidos tanto pela API quanto pelo frontend.
+O domínio não depende de nada além de si mesmo.
 
 ---
 
-## Pré-requisitos
+## Segurança do CPF
+
+O CPF nunca é armazenado em texto claro. Três colunas substituem o campo original:
+
+| Coluna            | Algoritmo                    | Propósito                                                                 |
+| ----------------- | ---------------------------- | ------------------------------------------------------------------------- |
+| `cpf_hash`        | Argon2id                     | Hash irreversível para armazenamento seguro                               |
+| `cpf_fingerprint` | HMAC-SHA256 com `JWT_SECRET` | Determinístico — permite checar unicidade com `WHERE cpf_fingerprint = ?` |
+| `cpf_masked`      | String estática              | Exibição: `***.XXX.XXX-**`                                                |
+
+---
+
+## Requisitos
 
 - Node.js 20+
-- pnpm 9+ (`npm install -g pnpm`)
-- Docker e Docker Compose (para rodar com banco de dados)
+- pnpm 9.4.0 (`corepack enable pnpm`)
+- Docker Desktop
 
 ---
 
-## Rodando Localmente
+## Setup local
 
-### 1. Instalação
+### 1. Clonar e instalar dependências
 
 ```bash
-git clone git@github.com:LucasF0904/customer-registration-form.git
+git clone git@github.com-personal:LucasF0904/customer-registration-form.git
 cd customer-registration-form
 pnpm install
 ```
 
-### 2. Variáveis de ambiente
+### 2. Configurar variáveis de ambiente
 
 ```bash
 cp .env.example .env
 cp apps/api/.env.example apps/api/.env
 ```
 
-Edite os arquivos `.env` conforme necessário. Os valores padrão já funcionam com o Docker Compose.
+Edite `.env` e `apps/api/.env` conforme necessário. Os valores padrão já funcionam localmente.
 
-### 3. Banco de dados
+> **Porta do banco:** o `docker-compose.override.yml` mapeia `5433:5432` para evitar conflito com PostgreSQL local na porta 5432.
+
+### 3. Subir o banco
 
 ```bash
-# Sobe apenas o PostgreSQL
-docker compose up postgres -d
+docker compose up -d postgres
 ```
 
-As migrations rodam automaticamente quando a API inicia (`migrationsRun: true`).
-
-### 4. Iniciar
+### 4. Subir a API
 
 ```bash
-# Sobe API (porta 3001) + Web (porta 3000) em paralelo
+cd apps/api
+pnpm build
+node -r dotenv/config dist/main.js
+```
+
+API disponível em `http://localhost:3001` · Swagger em `http://localhost:3001/docs`
+
+### 5. Subir o frontend
+
+Em outro terminal, da raiz do projeto:
+
+```bash
 pnpm dev
 ```
 
-| Serviço  | URL                          |
-| -------- | ---------------------------- |
-| Frontend | http://localhost:3000        |
-| API      | http://localhost:3001        |
-| Swagger  | http://localhost:3001/docs   |
-| Health   | http://localhost:3001/health |
-
-> O Swagger só está disponível em `NODE_ENV !== 'production'`.
+Frontend disponível em `http://localhost:3000`
 
 ---
 
-## Rodando com Docker
+## Conta de administrador
 
-```bash
-# Sobe tudo: postgres + api + web
-docker compose up -d
+Criada automaticamente pela migration seed:
 
-# Com rebuild das imagens
-docker compose up -d --build
+| Campo  | Valor            |
+| ------ | ---------------- |
+| E-mail | `admin@eteg.com` |
+| Senha  | `Admin@123`      |
 
-# Verificar logs
-docker compose logs -f api
-```
+O ícone de cadeado no canto superior direito do formulário abre o modal de login.
 
-Os serviços ficam disponíveis nas mesmas portas do ambiente local.
+---
+
+## Endpoints da API
+
+| Método | Rota               | Auth | Descrição                        |
+| ------ | ------------------ | ---- | -------------------------------- |
+| `GET`  | `/health`          | —    | Health check                     |
+| `GET`  | `/colors`          | —    | Cores disponíveis                |
+| `POST` | `/customers`       | —    | Registrar cliente                |
+| `POST` | `/auth/login`      | —    | Obter JWT                        |
+| `GET`  | `/customers/stats` | JWT  | Estatísticas                     |
+| `GET`  | `/customers`       | JWT  | Listar (paginado, busca, filtro) |
+| `GET`  | `/customers/:id`   | JWT  | Detalhe do cliente               |
+| `GET`  | `/docs`            | —    | Swagger UI                       |
 
 ---
 
 ## Testes
 
 ```bash
-# Testes unitários e de integração (todos os pacotes)
+# Unitários e integração
 pnpm test
 
-# Com coverage
-pnpm test:coverage
+# Lint
+pnpm lint
 
-# Testes E2E com Playwright
-pnpm test:e2e
-```
-
-### Cobertura por camada
-
-| Camada         | Mínimo |
-| -------------- | ------ |
-| Domain         | 90%    |
-| Application    | 80%    |
-| Infrastructure | 70%    |
-
----
-
-## Endpoints da API
-
-### `GET /health`
-
-Verifica a saúde da aplicação e a conectividade com o banco de dados.
-
-```json
-{
-  "status": "ok",
-  "info": { "database": { "status": "up" } }
-}
+# E2E (Playwright) — requer API e frontend rodando
+pnpm --filter web exec playwright test
 ```
 
 ---
 
-### `GET /colors`
+## Docker Compose (ambiente completo)
 
-Retorna as 7 cores do arco-íris disponíveis para seleção.
+```bash
+# Subir todos os serviços (banco + API + frontend)
+docker compose up -d
 
-```json
-{
-  "success": true,
-  "data": [
-    { "id": "uuid", "name": "Vermelho", "hexCode": "#E53E3E", "createdAt": "..." },
-    ...
-  ]
-}
+# Verificar
+curl http://localhost:3001/health
+curl http://localhost:3000
 ```
 
 ---
 
-### `POST /customers`
+## CI/CD
 
-Cadastra um novo cliente. CPF e e-mail devem ser únicos.
+GitHub Actions executa 4 jobs em sequência:
 
-**Request:**
-
-```json
-{
-  "name": "Maria Oliveira",
-  "cpf": "529.982.247-25",
-  "email": "maria@exemplo.com",
-  "colorId": "uuid-da-cor",
-  "notes": "Observações opcionais"
-}
-```
-
-**Response 201:**
-
-```json
-{
-  "success": true,
-  "data": {
-    "id": "uuid",
-    "name": "Maria Oliveira",
-    "cpf": "529.982.247-25",
-    "email": "maria@exemplo.com",
-    "color": { "id": "uuid", "name": "Vermelho", "hexCode": "#E53E3E" },
-    "notes": "Observações opcionais",
-    "createdAt": "2024-01-01T00:00:00.000Z"
-  }
-}
-```
-
-**Erros possíveis:**
-
-| Status | Código            | Descrição                                    |
-| ------ | ----------------- | -------------------------------------------- |
-| 400    | VALIDATION_ERROR  | CPF inválido ou campos obrigatórios ausentes |
-| 404    | NOT_FOUND         | Cor não encontrada                           |
-| 409    | CONFLICT          | CPF ou e-mail já cadastrado                  |
-| 429    | TOO_MANY_REQUESTS | Rate limit excedido (5 req/min)              |
+1. **lint** — ESLint em toda a codebase
+2. **test** — Vitest com PostgreSQL via `services`
+3. **build** — `turbo run build`
+4. **docker-build** — build das imagens Docker (sem push)
 
 ---
 
-## Variáveis de Ambiente
-
-### Raiz / Docker Compose
-
-| Variável      | Padrão                  | Descrição                 |
-| ------------- | ----------------------- | ------------------------- |
-| `DB_HOST`     | `localhost`             | Host do PostgreSQL        |
-| `DB_PORT`     | `5432`                  | Porta do PostgreSQL       |
-| `DB_USERNAME` | `postgres`              | Usuário do banco          |
-| `DB_PASSWORD` | `postgres`              | Senha do banco            |
-| `DB_NAME`     | `customer_registration` | Nome do banco             |
-| `API_PORT`    | `3001`                  | Porta exposta da API      |
-| `WEB_PORT`    | `3000`                  | Porta exposta do frontend |
-
-### API (`apps/api/.env`)
-
-| Variável         | Padrão                  | Descrição                        |
-| ---------------- | ----------------------- | -------------------------------- |
-| `NODE_ENV`       | `development`           | Ambiente                         |
-| `PORT`           | `3001`                  | Porta interna da API             |
-| `THROTTLE_TTL`   | `60000`                 | Janela do rate limit (ms)        |
-| `THROTTLE_LIMIT` | `5`                     | Máximo de requisições por janela |
-| `FRONTEND_URL`   | `http://localhost:3000` | Origem permitida pelo CORS       |
-
-### Web (`apps/web`)
-
-| Variável              | Descrição                          |
-| --------------------- | ---------------------------------- |
-| `NEXT_PUBLIC_API_URL` | URL da API consumida pelo frontend |
-
----
-
-## Estrutura do Monorepo
+## Estrutura do monorepo
 
 ```
 customer-registration-form/
 ├── apps/
-│   ├── api/                    # Backend NestJS
-│   │   ├── src/
-│   │   │   ├── colors/         # Módulo de cores
-│   │   │   ├── customers/      # Módulo de clientes
-│   │   │   ├── database/       # Data source + migrations
-│   │   │   ├── health/         # Health check
-│   │   │   └── shared/         # Filtros, interceptors, pipes
-│   │   └── Dockerfile
-│   └── web/                    # Frontend Next.js
-│       ├── src/
-│       │   ├── app/            # App Router (layout, page)
-│       │   ├── components/     # Componentes React
-│       │   └── lib/            # API client, utils
-│       └── Dockerfile
+│   ├── api/           → NestJS 10 (Fastify, TypeORM, Argon2id)
+│   └── web/           → Next.js 14 App Router (Framer Motion)
 ├── packages/
-│   ├── shared/                 # Tipos e DTOs compartilhados
-│   └── tsconfig/               # Configurações TypeScript base
-├── .github/workflows/ci.yml    # Pipeline CI
+│   ├── shared/        → DTOs e tipos compartilhados entre API e Web
+│   └── tsconfig/      → tsconfig base compartilhado
 ├── docker-compose.yml
+├── docker-compose.override.yml
 └── turbo.json
 ```
-
----
-
-## Cores Disponíveis (seed via migration)
-
-| Nome     | Hex       |
-| -------- | --------- |
-| Vermelho | `#E53E3E` |
-| Laranja  | `#ED8936` |
-| Amarelo  | `#ECC94B` |
-| Verde    | `#48BB78` |
-| Azul     | `#4299E1` |
-| Anil     | `#667EEA` |
-| Violeta  | `#9F7AEA` |
-
----
-
-## Pipeline CI
-
-O pipeline executa automaticamente em push para `main` e em pull requests:
-
-```
-Lint → Test (com PostgreSQL real) → Build → Docker Build
-```
-
-Cada etapa depende da anterior. O build Docker produz imagens mas não faz push para nenhum registry.

@@ -17,9 +17,15 @@ export class CustomerTypeOrmEntity {
   @Column({ type: 'varchar', length: 255 })
   name!: string
 
+  @Column({ type: 'text', name: 'cpf_hash' })
+  cpfHash!: string
+
+  @Column({ type: 'varchar', length: 20, name: 'cpf_masked' })
+  cpfMasked!: string
+
   @Index({ unique: true })
-  @Column({ type: 'varchar', length: 11 })
-  cpf!: string
+  @Column({ type: 'varchar', length: 64, name: 'cpf_fingerprint' })
+  cpfFingerprint!: string
 
   @Index({ unique: true })
   @Column({ type: 'varchar', length: 255 })

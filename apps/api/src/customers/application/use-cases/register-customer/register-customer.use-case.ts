@@ -5,6 +5,8 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common'
+import { createHmac } from 'crypto'
+import * as argon2 from 'argon2'
 import {
   CUSTOMER_REPOSITORY,
   ICustomerRepository,
@@ -16,6 +18,15 @@ import {
 import { isValidCpf } from '../../../../shared/validations/cpf.validation'
 import { RegisterCustomerDto } from './register-customer.dto'
 import { CustomerEntity } from '../../../domain/entities/customer.entity'
+
+function cpfFingerprint(digits: string): string {
+  const secret = process.env.JWT_SECRET ?? 'dev-secret-change-in-prod'
+  return createHmac('sha256', secret).update(digits).digest('hex')
+}
+
+function maskCpf(digits: string): string {
+  return `***.${digits.slice(3, 6)}.${digits.slice(6, 9)}-**`
+}
 
 @Injectable()
 export class RegisterCustomerUseCase {
@@ -31,10 +42,11 @@ export class RegisterCustomerUseCase {
       throw new BadRequestException('CPF inválido. Verifique os dígitos verificadores.')
     }
 
-    const normalizedCpf = dto.cpf.replace(/\D/g, '')
+    const digits = dto.cpf.replace(/\D/g, '')
+    const fingerprint = cpfFingerprint(digits)
 
     const [cpfExists, emailExists] = await Promise.all([
-      this.customerRepository.existsByCpf(normalizedCpf),
+      this.customerRepository.existsByCpfFingerprint(fingerprint),
       this.customerRepository.existsByEmail(dto.email.toLowerCase()),
     ])
 
@@ -51,9 +63,13 @@ export class RegisterCustomerUseCase {
       throw new NotFoundException('Cor não encontrada.')
     }
 
+    const cpfHash = await argon2.hash(digits, { type: argon2.argon2id })
+
     return this.customerRepository.create({
       name: dto.name.trim(),
-      cpf: normalizedCpf,
+      cpfHash,
+      cpfMasked: maskCpf(digits),
+      cpfFingerprint: fingerprint,
       email: dto.email.toLowerCase().trim(),
       colorId: dto.colorId,
       notes: dto.notes?.trim(),

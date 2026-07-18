@@ -13,11 +13,6 @@ interface CustomersTableProps {
   colors: RainbowColor[]
 }
 
-function formatCpf(cpf: string) {
-  const d = cpf.replace(/\D/g, '')
-  return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6, 9)}-${d.slice(9, 11)}`
-}
-
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('pt-BR', {
     day: '2-digit',
@@ -189,7 +184,7 @@ export function CustomersTable({ customers, meta, colors }: CustomersTableProps)
                         className="px-5 py-3.5 font-mono text-[12px]"
                         style={{ color: 'var(--muted)' }}
                       >
-                        {formatCpf(c.cpf)}
+                        {c.cpfMasked}
                       </td>
                       <td className="px-5 py-3.5" style={{ color: 'var(--muted)' }}>
                         {c.email}

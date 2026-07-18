@@ -4,7 +4,9 @@ export class CustomerEntity {
   constructor(
     readonly id: string,
     readonly name: string,
-    readonly cpf: string,
+    readonly cpfHash: string,
+    readonly cpfMasked: string,
+    readonly cpfFingerprint: string,
     readonly email: string,
     readonly color: ColorEntity,
     readonly createdAt: Date,

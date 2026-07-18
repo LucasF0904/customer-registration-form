@@ -9,7 +9,7 @@ export interface RegisterCustomerDto {
 export interface RegisterCustomerResponse {
   id: string
   name: string
-  cpf: string
+  cpfMasked: string
   email: string
   color: {
     id: string

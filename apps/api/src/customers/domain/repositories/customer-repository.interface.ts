@@ -2,7 +2,9 @@ import { CustomerEntity } from '../entities/customer.entity'
 
 export interface CreateCustomerData {
   name: string
-  cpf: string
+  cpfHash: string
+  cpfMasked: string
+  cpfFingerprint: string
   email: string
   colorId: string
   notes?: string
@@ -34,7 +36,7 @@ export interface CustomerStatsResult {
 
 export interface ICustomerRepository {
   create(data: CreateCustomerData): Promise<CustomerEntity>
-  existsByCpf(cpf: string): Promise<boolean>
+  existsByCpfFingerprint(fingerprint: string): Promise<boolean>
   existsByEmail(email: string): Promise<boolean>
   findAll(params: CustomerListParams): Promise<CustomerListResult>
   findById(id: string): Promise<CustomerEntity | null>

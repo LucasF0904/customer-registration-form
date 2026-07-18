@@ -26,7 +26,7 @@ async function getStats(token: string): Promise<CustomerStats> {
 async function getColors(token: string): Promise<RainbowColor[]> {
   const res = await fetch(`${API}/colors`, {
     headers: { Authorization: `Bearer ${token}` },
-    cache: 'no-store',
+    next: { revalidate: 86400 },
   })
   if (!res.ok) return []
   const data = await res.json()

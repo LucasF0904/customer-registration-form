@@ -50,7 +50,7 @@ export function SuccessScreen({ data }: SuccessScreenProps) {
         transition={{ delay: 0.35, type: 'spring', stiffness: 280, damping: 28 }}
       >
         <DetailRow label="Nome" value={data.name} />
-        <DetailRow label="CPF" value={formatCpf(data.cpf)} />
+        <DetailRow label="CPF" value={data.cpfMasked} />
         <DetailRow label="E-mail" value={data.email} />
         <DetailRow
           label="Cor preferida"
@@ -87,9 +87,4 @@ function DetailRow({
       <span className="text-[var(--text)]">{value}</span>
     </div>
   )
-}
-
-function formatCpf(cpf: string): string {
-  const d = cpf.replace(/\D/g, '')
-  return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6, 9)}-${d.slice(9, 11)}`
 }

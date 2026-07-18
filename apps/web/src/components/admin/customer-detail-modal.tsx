@@ -10,11 +10,6 @@ interface CustomerDetailModalProps {
   onClose: () => void
 }
 
-function formatCpf(cpf: string) {
-  const d = cpf.replace(/\D/g, '')
-  return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6, 9)}-${d.slice(9, 11)}`
-}
-
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('pt-BR', {
     day: '2-digit',
@@ -100,7 +95,7 @@ export function CustomerDetailModal({ customer, onClose }: CustomerDetailModalPr
                 <DetailField
                   icon={<CreditCard className="h-4 w-4" />}
                   label="CPF"
-                  value={formatCpf(customer.cpf)}
+                  value={customer.cpfMasked}
                   mono
                 />
                 <DetailField
