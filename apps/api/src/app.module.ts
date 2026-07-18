@@ -8,6 +8,8 @@ import { ColorsModule } from './colors/colors.module'
 import { HealthModule } from './health/health.module'
 import { CustomerTypeOrmEntity } from './customers/infrastructure/entities/customer.typeorm-entity'
 import { ColorTypeOrmEntity } from './colors/infrastructure/entities/color.typeorm-entity'
+import { AdminTypeOrmEntity } from './auth/infrastructure/entities/admin.typeorm-entity'
+import { AuthModule } from './auth/auth.module'
 
 @Module({
   imports: [
@@ -48,7 +50,7 @@ import { ColorTypeOrmEntity } from './colors/infrastructure/entities/color.typeo
         username: config.getOrThrow<string>('DB_USERNAME'),
         password: config.getOrThrow<string>('DB_PASSWORD'),
         database: config.getOrThrow<string>('DB_NAME'),
-        entities: [CustomerTypeOrmEntity, ColorTypeOrmEntity],
+        entities: [CustomerTypeOrmEntity, ColorTypeOrmEntity, AdminTypeOrmEntity],
         migrations: [__dirname + '/database/migrations/*.{ts,js}'],
         migrationsRun: true,
         synchronize: false,
@@ -56,6 +58,7 @@ import { ColorTypeOrmEntity } from './colors/infrastructure/entities/color.typeo
       }),
     }),
 
+    AuthModule,
     CustomersModule,
     ColorsModule,
     HealthModule,

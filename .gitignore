@@ -42,3 +42,6 @@ ormconfig.js
 
 # Docker
 docker-data/
+
+# Contexto local (não vai para o git)
+CLAUDE.md

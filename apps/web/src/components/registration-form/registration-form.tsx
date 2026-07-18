@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { RainbowColor, RegisterCustomerResponse } from '@customer-reg/shared'
 import { registrationFormSchema, RegistrationFormData } from './registration-form.schema'
 import { ColorPicker } from './color-picker'
@@ -25,6 +26,15 @@ function applyMask(value: string): string {
   if (digits.length > 6) return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`
   if (digits.length > 3) return `${digits.slice(0, 3)}.${digits.slice(3)}`
   return digits
+}
+
+const fieldVariants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.07 + 0.1, type: 'spring' as const, stiffness: 300, damping: 28 },
+  }),
 }
 
 export function RegistrationForm({ colors }: RegistrationFormProps) {
@@ -74,10 +84,21 @@ export function RegistrationForm({ colors }: RegistrationFormProps) {
   }
 
   return (
-    <div className="rounded-[10px] border border-[var(--border)] bg-[var(--card)] p-9">
+    <motion.div
+      className="rounded-[10px] border border-[var(--border)] bg-[var(--card)] p-9"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: 0.3 }}
+    >
       <form onSubmit={handleSubmit(onSubmit)} noValidate data-testid="registration-form">
         <div className="space-y-5">
-          <div className="space-y-1.5">
+          <motion.div
+            custom={0}
+            variants={fieldVariants}
+            initial="hidden"
+            animate="visible"
+            className="space-y-1.5"
+          >
             <Label htmlFor="name">
               Nome completo <span className="text-[var(--cta)]">*</span>
             </Label>
@@ -90,13 +111,24 @@ export function RegistrationForm({ colors }: RegistrationFormProps) {
               {...register('name')}
             />
             {errors.name && (
-              <p className="text-xs text-[var(--error)]" role="alert">
+              <motion.p
+                className="text-xs text-[var(--error)]"
+                role="alert"
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
                 {errors.name.message}
-              </p>
+              </motion.p>
             )}
-          </div>
+          </motion.div>
 
-          <div className="space-y-1.5">
+          <motion.div
+            custom={1}
+            variants={fieldVariants}
+            initial="hidden"
+            animate="visible"
+            className="space-y-1.5"
+          >
             <Label htmlFor="cpf">
               CPF <span className="text-[var(--cta)]">*</span>
             </Label>
@@ -121,13 +153,24 @@ export function RegistrationForm({ colors }: RegistrationFormProps) {
               Validação completa do dígito verificador
             </p>
             {errors.cpf && (
-              <p className="text-xs text-[var(--error)]" role="alert">
+              <motion.p
+                className="text-xs text-[var(--error)]"
+                role="alert"
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
                 {errors.cpf.message}
-              </p>
+              </motion.p>
             )}
-          </div>
+          </motion.div>
 
-          <div className="space-y-1.5">
+          <motion.div
+            custom={2}
+            variants={fieldVariants}
+            initial="hidden"
+            animate="visible"
+            className="space-y-1.5"
+          >
             <Label htmlFor="email">
               E-mail <span className="text-[var(--cta)]">*</span>
             </Label>
@@ -141,15 +184,26 @@ export function RegistrationForm({ colors }: RegistrationFormProps) {
               {...register('email')}
             />
             {errors.email && (
-              <p className="text-xs text-[var(--error)]" role="alert">
+              <motion.p
+                className="text-xs text-[var(--error)]"
+                role="alert"
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
                 {errors.email.message}
-              </p>
+              </motion.p>
             )}
-          </div>
+          </motion.div>
 
           <hr className="border-[var(--border)]" />
 
-          <div className="space-y-2">
+          <motion.div
+            custom={3}
+            variants={fieldVariants}
+            initial="hidden"
+            animate="visible"
+            className="space-y-2"
+          >
             <Label>
               Cor preferida <span className="text-[var(--cta)]">*</span>
             </Label>
@@ -165,11 +219,17 @@ export function RegistrationForm({ colors }: RegistrationFormProps) {
                 />
               )}
             />
-          </div>
+          </motion.div>
 
           <hr className="border-[var(--border)]" />
 
-          <div className="space-y-1.5">
+          <motion.div
+            custom={4}
+            variants={fieldVariants}
+            initial="hidden"
+            animate="visible"
+            className="space-y-1.5"
+          >
             <Label htmlFor="notes">Observações</Label>
             <Textarea
               id="notes"
@@ -178,24 +238,40 @@ export function RegistrationForm({ colors }: RegistrationFormProps) {
               {...register('notes')}
             />
             {errors.notes && (
-              <p className="text-xs text-[var(--error)]" role="alert">
+              <motion.p
+                className="text-xs text-[var(--error)]"
+                role="alert"
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
                 {errors.notes.message}
-              </p>
+              </motion.p>
             )}
-          </div>
+          </motion.div>
         </div>
 
-        {apiError && (
-          <div
-            className="mt-5 rounded border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-400"
-            role="alert"
-            data-testid="api-error"
-          >
-            {apiError}
-          </div>
-        )}
+        <AnimatePresence>
+          {apiError && (
+            <motion.div
+              className="mt-5 rounded border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-400"
+              role="alert"
+              data-testid="api-error"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+            >
+              {apiError}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-        <div className="mt-7">
+        <motion.div
+          className="mt-7"
+          custom={5}
+          variants={fieldVariants}
+          initial="hidden"
+          animate="visible"
+        >
           <Button
             type="submit"
             className="w-full"
@@ -211,8 +287,8 @@ export function RegistrationForm({ colors }: RegistrationFormProps) {
               'Enviar cadastro'
             )}
           </Button>
-        </div>
+        </motion.div>
       </form>
-    </div>
+    </motion.div>
   )
 }

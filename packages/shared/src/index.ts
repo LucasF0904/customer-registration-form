@@ -9,3 +9,11 @@ export type {
 export type { RainbowColor } from './types/rainbow-color.types'
 
 export type { RegisterCustomerDto, RegisterCustomerResponse } from './dtos/register-customer.dto'
+
+export type {
+  LoginDto,
+  LoginResponse,
+  CustomerListItem,
+  CustomerStats,
+  CustomerListQuery,
+} from './types/admin.types'
