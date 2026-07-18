@@ -20,7 +20,7 @@ const itemVariants = {
 export function AnimatedPanel() {
   return (
     <motion.aside
-      className="sticky top-0 flex h-screen w-[420px] shrink-0 flex-col justify-between p-14"
+      className="sticky top-0 hidden h-screen w-[420px] shrink-0 flex-col justify-between p-14 min-[900px]:flex"
       style={{ background: 'var(--panel-bg)', color: 'var(--panel-text)' }}
       initial={{ opacity: 0, x: -32 }}
       animate={{ opacity: 1, x: 0 }}

@@ -46,7 +46,7 @@ test.describe('Registration Form', () => {
           data: {
             id: '550e8400-e29b-41d4-a716-446655440000',
             name: 'Maria Oliveira',
-            cpf: '52998224725',
+            cpfMasked: '***.982.247-**',
             email: 'maria@exemplo.com',
             color: { id: 'color-id', name: 'Vermelho', hexCode: '#E53E3E' },
             createdAt: new Date().toISOString(),
@@ -79,7 +79,7 @@ test.describe('Registration Form', () => {
     await page.getByTestId('input-cpf').fill(VALID_CPF)
     await page.getByTestId('input-email').fill('maria@exemplo.com')
 
-    await page.getByRole('radio', { name: 'Vermelho' }).check()
+    await page.locator('label[title="Vermelho"]').click()
     await page.getByTestId('submit-button').click()
 
     await expect(page.getByText('Cadastro realizado!')).toBeVisible({ timeout: 5000 })
@@ -121,7 +121,7 @@ test.describe('Registration Form', () => {
     await page.getByTestId('input-name').fill('Maria Oliveira')
     await page.getByTestId('input-cpf').fill(VALID_CPF)
     await page.getByTestId('input-email').fill('maria@exemplo.com')
-    await page.getByRole('radio', { name: 'Vermelho' }).check()
+    await page.locator('label[title="Vermelho"]').click()
     await page.getByTestId('submit-button').click()
 
     await expect(page.getByTestId('api-error')).toBeVisible({ timeout: 5000 })
