@@ -22,7 +22,7 @@ RUN pnpm --filter api build
 
 FROM node:20-alpine AS runner
 WORKDIR /app
-RUN apk add --no-cache libstdc++
+RUN apk add --no-cache libstdc++ wget
 ENV NODE_ENV=production
 
 RUN addgroup --system --gid 1001 nodejs
