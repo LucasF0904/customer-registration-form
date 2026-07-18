@@ -17,6 +17,9 @@ COPY apps/api/package.json ./apps/api/
 COPY packages/tsconfig/package.json ./packages/tsconfig/
 COPY packages/shared/package.json ./packages/shared/
 RUN pnpm install --frozen-lockfile --ignore-scripts --filter api... --filter @customer-reg/shared...
+RUN echo "=== ROOT .bin/nest ===" && ls node_modules/.bin/nest 2>/dev/null || echo "NOT FOUND in root .bin" && \
+    echo "=== API .bin/nest ===" && ls apps/api/node_modules/.bin/nest 2>/dev/null || echo "NOT FOUND in api .bin" && \
+    echo "=== API .bin contents ===" && ls apps/api/node_modules/.bin/ | head -20 || echo "NO API .bin DIR"
 COPY packages ./packages
 COPY apps/api ./apps/api
 COPY turbo.json ./
