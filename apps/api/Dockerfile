@@ -4,7 +4,7 @@ RUN corepack enable pnpm
 FROM base AS deps
 WORKDIR /app
 RUN apk add --no-cache python3 make g++
-COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml .npmrc ./
 COPY apps/api/package.json ./apps/api/
 COPY packages/tsconfig/package.json ./packages/tsconfig/
 COPY packages/shared/package.json ./packages/shared/
