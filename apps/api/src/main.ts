@@ -9,6 +9,16 @@ import { GlobalExceptionFilter } from './shared/filters/global-exception.filter'
 import { ResponseInterceptor } from './shared/interceptors/response.interceptor'
 
 async function bootstrap() {
+  console.log(
+    '[DIAG] STARTUP DB_HOST=' +
+      process.env.DB_HOST +
+      ' DB_PORT=' +
+      process.env.DB_PORT +
+      ' DB_NAME=' +
+      process.env.DB_NAME +
+      ' NODE_ENV=' +
+      process.env.NODE_ENV,
+  )
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter(), {
     bufferLogs: true,
   })
