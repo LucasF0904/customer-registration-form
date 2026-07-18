@@ -13,7 +13,7 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,json,md}\"",
     "migration:run": "turbo run migration:run --filter=api",
     "migration:revert": "turbo run migration:revert --filter=api",
-    "prepare": "husky"
+    "prepare": "husky || true"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
