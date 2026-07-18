@@ -28,7 +28,7 @@ RUN adduser --system --uid 1001 nestjs
 USER nestjs
 
 COPY --from=builder --chown=nestjs:nodejs /app/apps/api/dist ./dist
-COPY --from=builder --chown=nestjs:nodejs /app/apps/api/node_modules ./node_modules
+COPY --from=builder --chown=nestjs:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=nestjs:nodejs /app/apps/api/package.json ./
 
 EXPOSE 3001
