@@ -7,6 +7,7 @@ COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY apps/web/package.json ./apps/web/
 COPY packages/tsconfig/package.json ./packages/tsconfig/
 COPY packages/shared/package.json ./packages/shared/
+ENV HUSKY=0
 RUN pnpm install --frozen-lockfile --filter web... --filter @customer-reg/shared...
 
 FROM base AS builder
