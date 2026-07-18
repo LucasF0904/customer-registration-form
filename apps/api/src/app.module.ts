@@ -55,6 +55,8 @@ import { AuthModule } from './auth/auth.module'
         migrationsRun: true,
         synchronize: false,
         logging: config.get('NODE_ENV') === 'development',
+        retryAttempts: 5,
+        retryDelay: 3000,
       }),
     }),
 
