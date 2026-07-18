@@ -35,6 +35,8 @@ async function bootstrap() {
       .setTitle('Customer Registration API')
       .setDescription('API para cadastro único de clientes com validação de CPF e cor preferida.')
       .setVersion('1.0')
+      .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' })
+      .addTag('auth', 'Autenticação de administrador')
       .addTag('customers', 'Operações de cadastro de clientes')
       .addTag('colors', 'Cores disponíveis para seleção')
       .addTag('health', 'Monitoramento da aplicação')
